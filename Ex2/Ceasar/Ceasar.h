@@ -26,25 +26,29 @@
 
 //............................Defines..................................//
 //.....................................................................//
-#define ASSERT(name, arg) do{													\
-	if (!arg){																	\
-		if(errno)																\
-			printf("%s was failed: %s\n", name, strerror(errno));				\
-		else if (GetLastError())												\
-			printf("%s was failed: WinError 0x%X\n", name, GetLastError());		\
-		else																	\
-			printf("%s was failed: unknown error\n", name);						\
-	exit(EXIT_FAILURE);															\
-	}																			\
+#define ASSERT(name, arg) do{                                                    \
+    if (!arg){                                                                    \
+        if(errno)                                                                \
+            printf("%s was failed: %s\n", name, strerror(errno));                \
+        else if (GetLastError())                                                \
+            printf("%s was failed: WinError 0x%X\n", name, GetLastError());        \
+        else                                                                    \
+            printf("%s was failed: unknown error\n", name);                        \
+    exit(EXIT_FAILURE);                                                            \
+    }                                                                            \
 } while (0)
 
 
 //...........................Structs...................................//
 //.....................................................................//
 typedef struct files {
-	FILE* input;
-	FILE* output;
+    FILE* input;
+    FILE* output;
+    char key;
+    char thread;
+    char type; 
 }Files;
+
 
 //typedef struct ceasar {
 //}Ceasar;
@@ -52,5 +56,10 @@ typedef struct files {
 //...........................Functions.................................//
 //.....................................................................//
 void exit_prog(Files* files);
+
+void file_check(FILE* file);
+
+void print_to_file(Files* files);
+
 
 #endif // !CEASAR_H
