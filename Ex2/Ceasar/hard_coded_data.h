@@ -10,18 +10,18 @@
 //............................Defines..................................//
 //.....................................................................//
 
-#define ARGUMENTS				4
-#define LINE_LENGTH				1000
-#define SPACE					1
-#define NEW_LINE				1
-#define END_STRING				1
-#define FAIL_PROCESS			-1
+#define ARGUMENT                6
+#define LINE_LENGTH                1000
+#define SPACE                    1
+#define NEW_LINE                1
+#define END_STRING                1
+#define FAIL_PROCESS            -1
 
-#define A						65
-#define a						97
-#define Z						90
-#define z						122
-#define ZERO					49
-#define NINE					58
+#define A                        65
+#define a                        97
+#define Z                        90
+#define z                        122
+#define ZERO                    48
+#define NINE                    57
 
 #endif // !HARD_CODED_DATA_H
