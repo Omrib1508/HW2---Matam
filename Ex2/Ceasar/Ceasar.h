@@ -10,56 +10,70 @@
 #ifndef CEASAR_H
 #define CEASAR_H
 
-
+#define _CRT_SECURE_NO_WARNINGS
 //............................Includes.................................//
 //.....................................................................//
-#define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 #include <stdbool.h>
+#include <tchar.h>
 #include <windows.h>
+#include "Shlwapi.h"
 
 #include "hard_coded_data.h"
-
 //............................Defines..................................//
 //.....................................................................//
-#define ASSERT(name, arg) do{                                                    \
-    if (!arg){                                                                    \
-        if(errno)                                                                \
-            printf("%s was failed: %s\n", name, strerror(errno));                \
-        else if (GetLastError())                                                \
-            printf("%s was failed: WinError 0x%X\n", name, GetLastError());        \
-        else                                                                    \
-            printf("%s was failed: unknown error\n", name);                        \
-    exit(EXIT_FAILURE);                                                            \
-    }                                                                            \
+#define ASSERT(name, arg) do{																\
+	if (!arg){																				\
+		if(errno)																			\
+			printf("Error: %s was failed: %s\n", name, strerror(errno));					\
+		else if (GetLastError())															\
+			printf("Error: %s was failed: WinError 0x%X\n", name, GetLastError());			\
+		else																				\
+			printf("Error: %s was failed: unknown error\n", name);							\
+	exit(EXIT_FAILURE);																		\
+	}																						\
 } while (0)
 
+static char* output_path[] = {
+	[DE] = "decrypted.txt",
+	[EN] = "encrypted.txt",
+};
 
 //...........................Structs...................................//
 //.....................................................................//
-typedef struct files {
-    FILE* input;
-    FILE* output;
-    char key;
-    char thread;
-    char type; 
-}Files;
+typedef struct ceasar {
+	char*	input;
+	char*	output;
+	int		key;
+	int		thread_num;
+	bool	d_flag;
+	bool	e_flag;
+}Ceasar;
 
+typedef struct thread {
+	char* input;
+	char* output;
+	int key;
+	int start;
+	int end;
+} Thread;
 
-//typedef struct ceasar {
-//}Ceasar;
+typedef struct sector {
+	int start;
+	int end;
+} Sector;
 
 //...........................Functions.................................//
 //.....................................................................//
-void exit_prog(Files* files);
+int init_ceasar(Ceasar* ceasar, int argc, char* argv[]);
 
-void file_check(FILE* file);
+void init_flags(Ceasar* ceasar, char* flag);
 
-void print_to_file(Files* files);
+Sector* devide_file_2_sectors(Ceasar* ceasar);
 
+char* get_output_path(char* input_path, char* output_filename);
 
 #endif // !CEASAR_H

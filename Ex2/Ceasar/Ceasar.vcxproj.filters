@@ -21,12 +21,18 @@
     <ClCompile Include="Ceasar.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="encrypt_n_decrypt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ceasar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="hard_coded_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="encrypt_n_decrypt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
