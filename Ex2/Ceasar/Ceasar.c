@@ -9,101 +9,134 @@
 //............................Includes.................................//
 //.....................................................................//
 #include "Ceasar.h"
+#include "encrypt_n_decrypt.h"
 #include "hard_coded_data.h"
 
-extern int errno;
 //...........................Functions.................................//
 //.....................................................................//
-//...........................Functions.................................//
-//.....................................................................//
-
-/*
-* Function:        initialize
-* description:     the function initialize the files string
-* input:           files size
-* output:          files string
-*/
-void initialize_str(Files *files, char letter){
-    int num, out, chiffre;
-    if (letter>='A' && letter<='Z') {
-        num=(int)letter;
-        chiffre=A+files->key-48;
-        out=A+(letter-A-files->key+48)%26;
-        fprintf(files->output,"%c", (char)out);
-    }
-    else if (letter>='a' && letter<='z') {
-        out=a+(letter-a-files->key+48)%26;
-        fprintf(files->output,"%c", (char)out);
-
-    }
-    else if (letter>='0'&& letter<='9') {
-        out=ZERO+(letter-ZERO-files->key+48)%10;
-        fprintf(files->output,"%c", (char)out);
-
-    }
-    else if (letter=='\n'){
-        fprintf(files->output, "\n");
-    }
-    else{
-        if (letter!=EOF) {
-            fprintf(files->output, "%c", letter);
-            printf("%c", letter);
-        }
-    }
-
-}
-
-/*
-* Function:        print to file
-* description:     the function prints the string to the output file
-* input:           files struct, files string
-* output:          none
-*/
-void print_to_file(Files *files){
-    char* files_str=NULL;
-    char letter;
-    files_str = (char*)malloc(sizeof(Files));
-    if (!files_str) {
-            printf("Error: memory doesn't allocote correctly\n");
-            exit(EXIT_FAILURE);
-    }
-    while (!feof(files->input)) {
-        
-        letter = fgetc(files->input);
-        initialize_str(files,letter);
-    }
-}
-
-/*
-* Function:        file_check
-* description:     check if file open correctlly
-* input:           file
-* output:          none
-*/
-void file_check(FILE* file){
-    int                errnum;
-    
-    if (!file) {
-        errnum = errno;
-        fprintf(stderr, "Value of errno: %d\n", errno);
-        perror("Error printed by perror");
-        fprintf(stderr, "Error opening file: %s\n", strerror(errnum));
-        
-        exit(EXIT_FAILURE);
-    }
-}
-
 /*
 * Function:        exit_prog
 * description:     this function close the program, close the file and free memory
 * input:           input file, output file, forest srtruct
 * output:          none
 */
-void exit_prog(Files* files) {
-    /* Close files*/
-    fclose(files->input);
-    fclose(files->output);
-    //free memory
-
+int init_ceasar(Ceasar* ceasar,int argc,char* argv[]) {
+	if (argc != ARGUMENTS) {
+		printf("Error: invalid number of arguments(%d instead of %d)\n",(argc - 1), ARGUMENTS);
+		exit(FAIL_PROCESS);
+	}
+	else {
+		ceasar->input = argv[INPUT_FILE];
+		/*if (!PathFileExistsA(ceasar->input)) {
+			ASSERT("PathFileExistsA", ceasar->input);
+			return FAIL_PROCESS;
+		}*/
+		ceasar->key = strtol(argv[KEY], NULL, 10);
+		if (errno == ERANGE) {
+			printf("Error: invaild key\n");
+			return FAIL_PROCESS;
+		}
+		ceasar->thread_num = strtol(argv[THREADS_NUM], NULL, 10);
+		if (ceasar->thread_num < 1 || errno == ERANGE) {
+			printf("Error: number of thread isn't illegal. must be at least 1\n");
+		}
+		init_flags(ceasar, argv[FLAG]);
+		if (ceasar->d_flag) {
+			ceasar->output = get_output_path(argv[INPUT_FILE], output_path[DE]);
+		}
+		else if (ceasar->e_flag) {
+			ceasar->output = get_output_path(argv[INPUT_FILE], output_path[EN]);
+			ceasar->key = -ceasar->key;
+		}
+		else {
+			return FAIL_PROCESS;
+		}
+	}
+	return EXIT_SUCCESS;
 }
 
+
+/*
+* Function:        init_flag
+* description:     this function initalize the flags struct, that tell us if decrypt
+*                  or descrypt
+* input:           flags sturct, flag argumnet from user
+* output:          none
+*/
+void init_flags(Ceasar* ceasar, char* flag) {
+
+	if (strcmp("-e", flag) == 0) {
+		ceasar->d_flag = false;
+		ceasar->e_flag = true;
+	}
+	else if (strcmp("-d", flag) == 0) {
+		ceasar->d_flag = true;
+		ceasar->e_flag = false;
+	}
+	else {
+		printf("Error: insert correct flag\n");
+		printf("Please insert flag [-d] or [-e]\n");
+	}
+}
+
+/*
+* Function:        decrypted_file
+* description:     this function initalize the flags struct, that tell us if decrypt
+*                  or descrypt
+* input:           flags sturct, flag argumnet from user
+* output:          none
+*/
+Sector* devide_file_2_sectors(Ceasar* ceasar){
+	FILE*		intput_file = NULL;
+	FILE*		output_file = NULL;
+	Sector*		sector = NULL;
+	int			sector_lines, remaind;
+	int			file_lines = 0;
+	char		c;
+
+	/*Calc number of lines in input file*/
+	intput_file = fopen(ceasar->input, "r");
+	ASSERT("fopen", intput_file);
+	for (c = getc(intput_file); c != EOF; c = getc(intput_file)) {
+		if (c == '\n') {
+			file_lines++;
+		}
+	}
+	fclose(intput_file);
+	ASSERT("fclose", intput_file);
+
+	/*Divide to sectors*/
+	sector_lines = file_lines / ceasar->thread_num;
+	remaind = file_lines % ceasar->thread_num;
+
+	if (ceasar->thread_num > file_lines) {
+		printf("Error: number of thread are to big for file\n");
+		exit(EXIT_FAILURE);
+	}
+	return sector;
+}
+
+/*
+* Function:        get_output_path
+* description:     this function initalize the flags struct, that tell us if decrypt
+*                  or descrypt
+* input:           flags sturct, flag argumnet from user
+* output:          none
+*/
+char* get_output_path(char* input_path, char* output_filename) {
+	char* output_path = NULL;
+	int index = (int)strlen(input_path);
+	int size;
+		while (input_path[index] != '\\') {
+			index--;
+		}
+		size = index + (int)strlen(output_filename);
+		output_path = (char*)calloc(size, sizeof(char));
+		ASSERT("malloc", output_path);
+		
+		memmove(output_path, input_path, index);
+		strcat(output_path, "\\");
+		strcat(output_path, output_filename);
+
+		return output_path;
+}
