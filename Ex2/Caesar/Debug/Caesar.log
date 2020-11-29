@@ -1,0 +1,5 @@
+﻿  encrypt_n_decrypt.c
+C:\Users\OMRI\Documents\לימודים\שנה ד ואחרונה\סימסטר ז\מבוא לתכנות מערכות\HW2\Ex2\Caesar\encrypt_n_decrypt.c(76,71): warning C4047: '=': 'LPDWORD' differs in levels of indirection from 'LPDWORD *'
+C:\Users\OMRI\Documents\לימודים\שנה ד ואחרונה\סימסטר ז\מבוא לתכנות מערכות\HW2\Ex2\Caesar\encrypt_n_decrypt.c(106,50): warning C4113: 'DWORD (__stdcall *)(HANDLE *,THREAD_Params *)' differs in parameter lists from 'LPTHREAD_START_ROUTINE'
+C:\Users\OMRI\Documents\לימודים\שנה ד ואחרונה\סימסטר ז\מבוא לתכנות מערכות\HW2\Ex2\Caesar\encrypt_n_decrypt.c(57,10): warning C4101: 'wait_code': unreferenced local variable
+  Caesar.vcxproj -> C:\Users\OMRI\Documents\לימודים\שנה ד ואחרונה\סימסטר ז\מבוא לתכנות מערכות\HW2\Ex2\Debug\Caesar.exe
